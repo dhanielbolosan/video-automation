@@ -1,0 +1,3 @@
+deepseek-harness-sdk
+kokoro-onnx
+soundfile
