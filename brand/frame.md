@@ -51,6 +51,11 @@ components:
     rounded: "0"
     shadow: "none"
     placement: "overlay ending 420px above the portrait canvas bottom"
+
+cta:
+  handle: "@pupukahi_tech"
+  copy: "Follow @pupukahi_tech for more content."
+  platforms: [tiktok, linkedin, instagram]
 ---
 
 # Pūpūkahi frame system
