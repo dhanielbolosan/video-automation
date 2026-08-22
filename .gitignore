@@ -1,5 +1,6 @@
 output/
-references/
+references/social-video/*/source.*
+references/social-video/*/frames/
 
 .env
 

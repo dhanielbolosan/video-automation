@@ -1,7 +1,7 @@
 # Editorial notes — fallback source material
 
-Used when `--research` is not passed. Replace this file, point `--source` at
-your own notes, or use `--research` to have the model find current facts itself.
+Used when `--source` is omitted. Replace this file or point `--source` at
+verified notes for the topic you are publishing.
 
 Working definition: "cheap" means a free or low-cost entry tier, not a promise
 that a product is free forever. Pricing, limits, and features change; do not put

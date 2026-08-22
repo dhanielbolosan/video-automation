@@ -1,0 +1,105 @@
+{
+  "message": "Choose AI subscriptions by business task, not by hype.",
+  "audience": "Local small business owners and nonprofit teams",
+  "music": "minimal technical",
+  "scenes": [
+    {
+      "title": "The hook",
+      "slug": "start-with-work",
+      "voiceover": "The best affordable AI subscription is not the most famous one. It is the one attached to work you already do.",
+      "duration_s": 7,
+      "transition_in": "cut",
+      "layout": "hero",
+      "eyebrow": "BUY THE TASK / NOT THE HYPE",
+      "headline": "Start with the work.",
+      "subhead": "One useful workflow beats five unused subscriptions.",
+      "hero": "01",
+      "hero_label": "Rule before tools",
+      "items": []
+    },
+    {
+      "title": "General assistant",
+      "slug": "general-assistant",
+      "voiceover": "For writing, planning, and everyday problem solving, begin with one general assistant and learn it deeply.",
+      "duration_s": 7,
+      "transition_in": "push-slide LEFT",
+      "layout": "rank",
+      "eyebrow": "CORE SUBSCRIPTION",
+      "headline": "Your everyday copilot.",
+      "subhead": "Draft, reason, summarize, and organize from one place.",
+      "hero": "#1",
+      "hero_label": "General assistant",
+      "items": [
+        {"label": "Best for", "value": "Daily work"},
+        {"label": "Proof", "value": "Use it weekly"}
+      ]
+    },
+    {
+      "title": "Research",
+      "slug": "research-proof",
+      "voiceover": "When sources matter, use a research tool that shows where its answers came from, then verify the important claims.",
+      "duration_s": 7,
+      "transition_in": "push-slide LEFT",
+      "layout": "interface",
+      "eyebrow": "RESEARCH MODE",
+      "headline": "Answers need receipts.",
+      "subhead": "Make citations part of the workflow, not an afterthought.",
+      "hero": "VERIFY",
+      "hero_label": "Source before publish",
+      "items": [
+        {"label": "Search", "value": "Find"},
+        {"label": "Sources", "value": "Check"},
+        {"label": "Claim", "value": "Publish"}
+      ]
+    },
+    {
+      "title": "Compare",
+      "slug": "compare-workflows",
+      "voiceover": "Compare tools using one real task from your business. The clearest useful result wins, not the longest feature list.",
+      "duration_s": 7,
+      "transition_in": "zoom-through",
+      "layout": "comparison",
+      "eyebrow": "ONE TASK / TWO TOOLS",
+      "headline": "Run the same test.",
+      "subhead": "Use your own email, plan, or customer question.",
+      "hero": "A/B",
+      "hero_label": "Comparable evidence",
+      "items": [
+        {"label": "Tool A", "value": "Useful?"},
+        {"label": "Tool B", "value": "Clearer?"}
+      ]
+    },
+    {
+      "title": "Adoption",
+      "slug": "adoption-loop",
+      "voiceover": "Adopt one tool for thirty days. Measure whether it saves time or improves quality before adding another subscription.",
+      "duration_s": 8,
+      "transition_in": "push-slide LEFT",
+      "layout": "process",
+      "eyebrow": "THE ADOPTION LOOP",
+      "headline": "Test. Measure. Keep.",
+      "subhead": "A subscription earns its place through repeated use.",
+      "hero": "30 DAYS",
+      "hero_label": "One workflow trial",
+      "items": [
+        {"label": "Week one", "value": "Choose task"},
+        {"label": "Week two", "value": "Repeat"},
+        {"label": "Month end", "value": "Keep or cut"}
+      ]
+    },
+    {
+      "title": "Follow",
+      "slug": "follow",
+      "voiceover": "Follow Pupukahi Tech for more practical technology guidance for local people and small businesses.",
+      "duration_s": 7,
+      "transition_in": "push-slide LEFT",
+      "layout": "cta",
+      "eyebrow": "PŪPŪKAHI TECH",
+      "headline": "Follow @pupukahi_tech",
+      "subhead": "Practical technology for local people and small businesses.",
+      "hero": "",
+      "hero_label": "",
+      "items": []
+    }
+  ]
+}
