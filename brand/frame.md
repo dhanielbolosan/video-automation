@@ -3,9 +3,11 @@ name: "Pūpūkahi Tech Foundation — ocean editorial motion"
 source: "https://pupukahitech.org/"
 reference_sources:
   - "https://pupukahitech.org/"
-  - references/social-video/tiktok-01
   - references/social-video/designmotionhq-7653885687615196448
   - references/social-video/greatfrontend-7671274292918766862
+  - references/social-video/tiktok-01
+  - references/social-video/tiktok-02
+  - references/social-video/tiktok-03
 colors:
   canvas: "#0e394e"
   ink: "#fcfaf8"

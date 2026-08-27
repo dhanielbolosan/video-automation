@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "hyperframes": "0.8.15",
+  "install": "npx hyperframes@0.8.15 add <name> --dir <generated-project> --force",
+  "policy": {
+    "unlisted_items": "reject",
+    "max_primary_visuals_per_scene": 1,
+    "max_optional_effects_per_scene": 1,
+    "prefer": "native-portrait",
+    "components_are": "host-wired slots, not standalone scenes",
+    "demo_defaults": "reject"
+  },
+  "items": [
+    {
+      "name": "ai-chat-reveal",
+      "type": "block",
+      "roles": ["ai", "chat", "answer", "portrait-hook"],
+      "render": "native-portrait",
+      "dimensions": {"width": 1080, "height": 1920},
+      "duration_s": 19.3333
+    },
+    {
+      "name": "chatgpt-exchange",
+      "type": "block",
+      "roles": ["ai", "chat", "comparison", "product-demo"],
+      "render": "native-portrait",
+      "dimensions": {"width": 1080, "height": 1920},
+      "duration_s": 14.9
+    },
+    {
+      "name": "claude-exchange",
+      "type": "block",
+      "roles": ["ai", "research", "workflow", "product-demo"],
+      "render": "native-portrait",
+      "dimensions": {"width": 1080, "height": 1920},
+      "duration_s": 21.4
+    },
+    {
+      "name": "flowchart-vertical",
+      "type": "block",
+      "roles": ["process", "decision", "technical", "diagram"],
+      "render": "portrait-adapter",
+      "dimensions": {"width": 1440, "height": 2560},
+      "duration_s": 12
+    },
+    {
+      "name": "message-thread-reveal",
+      "type": "block",
+      "roles": ["conversation", "notification", "chat", "proof"],
+      "render": "native-portrait",
+      "dimensions": {"width": 1080, "height": 1920},
+      "duration_s": 25.7667
+    },
+    {
+      "name": "data-chart",
+      "type": "block",
+      "roles": ["data", "bar", "line", "statistics"],
+      "render": "portrait-adapter",
+      "dimensions": {"width": 1920, "height": 1080},
+      "duration_s": 15
+    },
+    {
+      "name": "bar-chart-race",
+      "type": "block",
+      "roles": ["ranking", "data", "time-series"],
+      "render": "portrait-adapter",
+      "dimensions": {"width": 1920, "height": 1080},
+      "duration_s": 12
+    },
+    {
+      "name": "mk-line-graph",
+      "type": "block",
+      "roles": ["trend", "comparison", "data-viz"],
+      "render": "portrait-adapter",
+      "dimensions": {"width": 1920, "height": 1080},
+      "duration_s": 7
+    },
+    {
+      "name": "mk-progress-stat",
+      "type": "block",
+      "roles": ["stat", "number", "progress", "proof"],
+      "render": "portrait-adapter",
+      "dimensions": {"width": 1920, "height": 1080},
+      "duration_s": 7
+    },
+    {
+      "name": "mk-specs-list",
+      "type": "block",
+      "roles": ["checklist", "features", "comparison", "proof"],
+      "render": "portrait-adapter",
+      "dimensions": {"width": 1920, "height": 1080},
+      "duration_s": 8
+    },
+    {
+      "name": "code-diff",
+      "type": "block",
+      "roles": ["code", "diff", "refactor", "technical"],
+      "render": "portrait-adapter",
+      "dimensions": {"width": 1920, "height": 1080},
+      "duration_s": 6
+    },
+    {
+      "name": "code-highlight",
+      "type": "block",
+      "roles": ["code", "highlight", "technical", "explain"],
+      "render": "portrait-adapter",
+      "dimensions": {"width": 1920, "height": 1080},
+      "duration_s": 5
+    },
+    {
+      "name": "code-typing",
+      "type": "block",
+      "roles": ["code", "typing", "technical", "reveal"],
+      "render": "portrait-adapter",
+      "dimensions": {"width": 1920, "height": 1080},
+      "duration_s": 5
+    },
+    {
+      "name": "comparison-split",
+      "type": "component",
+      "roles": ["before-after", "comparison", "wipe"],
+      "render": "component-slot"
+    },
+    {
+      "name": "grid-card-assemble",
+      "type": "component",
+      "roles": ["capabilities", "list", "feature-tour", "process"],
+      "render": "component-slot"
+    },
+    {
+      "name": "tracing-beam",
+      "type": "component",
+      "roles": ["workflow", "attention", "diagram", "sequence"],
+      "render": "component-slot"
+    },
+    {
+      "name": "code-terminal-run",
+      "type": "component",
+      "roles": ["code", "terminal", "command", "output"],
+      "render": "component-slot"
+    },
+    {
+      "name": "ticker-takeover",
+      "type": "component",
+      "roles": ["headline", "options", "reveal", "ranking"],
+      "render": "component-slot"
+    },
+    {
+      "name": "cut-the-curve",
+      "type": "component",
+      "roles": ["transition", "directional", "velocity"],
+      "render": "transition"
+    },
+    {
+      "name": "directional-wipe",
+      "type": "component",
+      "roles": ["transition", "push", "directional"],
+      "render": "transition"
+    },
+    {
+      "name": "fade-through",
+      "type": "component",
+      "roles": ["transition", "calm", "scene-change"],
+      "render": "transition"
+    },
+    {
+      "name": "match-cut",
+      "type": "component",
+      "roles": ["transition", "match", "continuity"],
+      "render": "transition"
+    },
+    {
+      "name": "zoom-through-transition",
+      "type": "component",
+      "roles": ["transition", "zoom", "reveal"],
+      "render": "transition"
+    }
+  ],
+  "notes": [
+    "This is a strict first-pass visual shortlist, not a claim that every catalog item is good.",
+    "Keep caption, CTA, shader, 3D, handwritten, placeholder, and demo-only items out of scene selection.",
+    "Use one primary item per scene; transitions are the only optional second item.",
+    "If none of these fits, report a catalog gap instead of inventing SVG or HTML."
+  ]
+}

@@ -36,13 +36,16 @@ def slugify(value: str, limit: int = 60) -> str:
 
 def next_project(topic: str) -> Path:
     base = slugify(topic)
-    version = 1
-    while (OUTPUT / f"{base}-v{version}").exists():
-        version += 1
-    incomplete = OUTPUT / f"{base}-v{version - 1}"
-    if version > 1 and (incomplete / "hyperframes.json").is_file() and not (incomplete / "plan.json").exists():
+    versions = [
+        int(match.group(1))
+        for path in OUTPUT.glob(f"{base}-v*")
+        if (match := re.fullmatch(re.escape(base) + r"-v(\d+)", path.name))
+    ]
+    latest = max(versions, default=0)
+    incomplete = OUTPUT / f"{base}-v{latest}"
+    if latest and (incomplete / "hyperframes.json").is_file() and not (incomplete / "plan.json").exists():
         return incomplete
-    return OUTPUT / f"{base}-v{version}"
+    return OUTPUT / f"{base}-v{latest + 1}"
 
 
 def run(command: list[str], cwd: Path, timeout: int = 3600, env: dict[str, str] | None = None) -> str:
@@ -84,7 +87,7 @@ def _cached_hyperframes() -> Path | None:
 def hyperframes(*args: str, cwd: Path, timeout: int = 3600) -> str:
     if binary := _cached_hyperframes():
         return run(["node", str(binary), *args], cwd, timeout)
-    return run(["npx", "--yes", "hyperframes", *args], cwd, timeout)
+    return run(["npx", "--yes", "hyperframes@0.8.15", *args], cwd, timeout)
 
 
 def check_tools() -> None:

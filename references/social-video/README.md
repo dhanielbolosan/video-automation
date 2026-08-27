@@ -40,6 +40,15 @@ second, and so on. `contact-sheet.jpg` samples eight evenly spaced moments.
   diagram, restrained green/blue accents, direct manipulation of the diagram.
 - Reuse for: definitions, comparisons, technical tutorials, process diagrams.
 
+## Reference 5 — KodeKloud / rate-limit explainer
+
+- Source: https://www.tiktok.com/@kodekloud/video/7677953944525540629
+- Local: `tiktok-03/`
+- 720x1280, 144 seconds, 144 reference frames
+- Grammar: near-black field, hand-drawn display headings, one color per limit,
+  persistent resource bars, and diagrams that change state as the explanation advances.
+- Reuse for: technical systems, quota or pricing explanations, timelines, and comparisons.
+
 ## Shared rules worth encoding
 
 1. One idea, one hero object, and one dominant headline per shot.

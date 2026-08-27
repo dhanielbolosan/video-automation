@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "topic": "Could AI and stablecoins get emergency grants to Hawaii small businesses faster?",
+  "audience": "Hawaii small business owners, nonprofit staff, and community leaders",
+  "researched_at": "2026-08-27",
+  "model": "claude-haiku-4-5",
+  "facts": [
+    {
+      "id": "F1",
+      "claim": "Blockchain platform reduced Maui wildfire aid delivery from weeks to minutes during 2023 disaster",
+      "detail": "Kare Wallet successfully deployed blockchain-based aid delivery during the August 2023 Maui wildfires. The system cut processing time from weeks to minutes by eliminating manual verification steps and creating digital identities via blockchain, allowing survivors to access funds without physical documentation.",
+      "source_title": "Kare Wallet Delivers Disaster Relief Rapidly Through Blockchain Innovation",
+      "source_url": "https://algorand.co/case-studies/kare-wallet-delivers-disaster-relief-rapidly-through-blockchain-innovation"
+    },
+    {
+      "id": "F2",
+      "claim": "AI and blockchain systems reduced disaster relief disbursement time by up to 70 percent and administrative overhead by 30-50 percent",
+      "detail": "Recent initiatives combining AI and blockchain technology for disaster relief achieved up to 70% reduction in disbursement time and 30-50% reduction in administration overhead compared to traditional manual processes. These systems automate eligibility verification and payment processing.",
+      "source_title": "Digital Tools Transforming Humanitarian Aid",
+      "source_url": "https://publichealth.jhu.edu/center-for-global-digital-health-innovation/august-2024-digital-tools-transforming-humanitarian-aid"
+    },
+    {
+      "id": "F3",
+      "claim": "FEMA grant payment processing typically takes up to 30 days after submission",
+      "detail": "Standard FEMA payment processing time is up to 30 days depending on submission size and scope. Application registration itself can take 4 weeks. Additional information requests extend the timeline further. Hawaii 2026 deadlines for disaster assistance applications were June 14.",
+      "source_title": "FEMA Press Release: Hawaii Assistance Deadline Extended",
+      "source_url": "https://www.fema.gov/press-release/20260423/deadline-apply-fema-assistance-extended-june-14-maui-hawaii-and-honolulu"
+    },
+    {
+      "id": "F4",
+      "claim": "American Red Cross accepts USDC stablecoin donations for disaster relief",
+      "detail": "The American Red Cross began accepting USDC (a US-dollar-pegged stablecoin) donations specifically for disaster relief efforts, enabling faster fund allocation during emergencies. Stablecoin transfers complete in seconds versus bank transfers in days.",
+      "source_title": "Crypto and Humanitarian Aid - Coinbase Institute",
+      "source_url": "https://www.coinbase.com/public-policy/advocacy/documents/crypto-and-humanitarian-aid"
+    },
+    {
+      "id": "F5",
+      "claim": "Stablecoin issuers currently lack statutory authorization to directly access government emergency assistance funds",
+      "detail": "U.S. legislation does not grant stablecoin issuers direct access to federal emergency assistance programs. However, stablecoins can be used for NGO and nonprofit disaster relief (Red Cross, Oxfam examples), creating a funding pathway outside direct government channels.",
+      "source_title": "Stablecoins and Emergency Assistance",
+      "source_url": "https://www.coinbase.com/public-policy/advocacy/documents/crypto-and-humanitarian-aid"
+    },
+    {
+      "id": "F6",
+      "claim": "World Food Programme blockchain transfer saved $3.5 million in bank fees on $555 million in aid since 2017",
+      "detail": "The World Food Programme's Building Blocks system has transferred over $555 million using blockchain since 2017, reducing banking fees by $3.5 million. This demonstrates operational cost savings possible when stablecoins replace traditional banking rails for large-scale aid distribution.",
+      "source_title": "Stablecoins in Nonprofit Fundraising",
+      "source_url": "https://us.fundsforngos.org/articles/the-role-of-stablecoins-in-nonprofit-fundraising/"
+    }
+  ]
+}

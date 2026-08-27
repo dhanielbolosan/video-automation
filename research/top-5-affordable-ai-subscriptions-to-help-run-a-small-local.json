@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "topic": "Top 5 affordable AI subscriptions to help run a small local business",
+  "audience": "Hawaii small business owners, nonprofit staff, and local entrepreneurs",
+  "researched_at": "2026-08-27",
+  "model": "claude-haiku-4-5",
+  "facts": [
+    {
+      "id": "F1",
+      "claim": "ChatGPT Plus costs $20/month, Claude Pro costs $20/month, and Google AI Pro costs $19.99/month",
+      "detail": "All three major individual AI subscriptions converged to nearly identical pricing in 2026. Each includes robust text generation, document analysis, and coding assistance. Accessible globally including Hawaii via web or mobile app.",
+      "source_title": "2026 AI Subscription Prices: Gemini vs ChatGPT vs Claude",
+      "source_url": "https://www.sentisight.ai/ai-price-comparison-gemini-chatgpt-claude-grok/"
+    },
+    {
+      "id": "F2",
+      "claim": "Otter.ai free plan includes 300 minutes of automatic transcription per month",
+      "detail": "No credit card required. Real-time meeting transcription useful for capturing client calls, team standups, and interviews without manual note-taking. Actionable for solo entrepreneurs and small teams.",
+      "source_title": "12 Best AI Tools for Small Businesses in 2026",
+      "source_url": "https://www.nextiva.com/blog/best-ai-tools-for-small-business.html"
+    },
+    {
+      "id": "F3",
+      "claim": "Zapier offers 15% discount on automation subscriptions for nonprofit organizations",
+      "detail": "Connects AI tools and automates workflows between apps. Discount applies to all paid plans. Reduces workflow automation cost for mission-driven organizations and nonprofits.",
+      "source_title": "Free and Cheap AI Tools for Nonprofits in 2026",
+      "source_url": "https://thedigitalnonprofit.com/free-and-cheap-ai-tools-for-nonprofits/"
+    },
+    {
+      "id": "F4",
+      "claim": "HubSpot CRM with AI features available free tier; includes AI-powered lead scoring and email automation",
+      "detail": "Free CRM tier available with AI capabilities. Nonprofit discounts available on paid tiers. Handles customer relationship management and basic sales automation without subscription cost.",
+      "source_title": "Free and Cheap AI Tools for Nonprofits in 2026",
+      "source_url": "https://thedigitalnonprofit.com/free-and-cheap-ai-tools-for-nonprofits/"
+    },
+    {
+      "id": "F5",
+      "claim": "AI software prices decreased 15% from 2024 to 2026 due to market competition",
+      "detail": "Per Gartner's 2026 AI Market Report. Average business AI spending ranges $100–$5,000/month depending on scale. Startups typically allocate $50–$500 annually, making AI tools more accessible to small operations.",
+      "source_title": "The 7 best cheap AI tools in 2026 (I tested them so you don't have to)",
+      "source_url": "https://www.eesel.ai/blog/cheap-ai-tools"
+    }
+  ]
+}
