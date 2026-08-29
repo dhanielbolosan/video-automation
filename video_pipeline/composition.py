@@ -9,10 +9,11 @@ import shutil
 from pathlib import Path
 
 from .catalog import install_commands, selected_items
-from .project import ROOT
+from .runtime import PACKAGE_DIR, ROOT
 
-TEMPLATES = ROOT / "video_pipeline" / "templates"
-CATALOG = ROOT / "video_pipeline" / "catalog"
+TEMPLATES = PACKAGE_DIR / "templates"
+CATALOG = PACKAGE_DIR / "catalog"
+
 
 CAPTION_OVERRIDE = """
 <style>
@@ -23,28 +24,31 @@ CAPTION_OVERRIDE = """
 </style>
 """
 
-
+# Normalize and HTML-escape text before placing it in a scene template.
 def _clean(value: object) -> str:
     return html.escape(" ".join(str(value or "").split()), quote=True)
 
-
+# Fill named template slots and fail if any required slot remains unresolved.
 def _replace(template: str, values: dict[str, object]) -> str:
     rendered = template
     for key, value in values.items():
         rendered = rendered.replace(f"@@{key}@@", str(value))
     missing = sorted(set(re.findall(r"@@([A-Z_]+)@@", rendered)))
+
     if missing:
         raise ValueError(f"unfilled template slots: {', '.join(missing)}")
+
     return rendered
 
 
+# Extract label-value rows from one planned scene.
 def _items(scene: dict) -> list[dict[str, str]]:
     return [
         {"label": _clean(item.get("label")), "value": _clean(item.get("value"))}
         for item in scene.get("items", [])
     ]
 
-
+# Render evidence items as numbered HTML rows.
 def _rows(items: list[dict[str, str]], class_name: str = "visual-row") -> str:
     return "".join(
         f'<div class="{class_name}"><span class="row-index">{index:02d}</span>'
@@ -52,7 +56,7 @@ def _rows(items: list[dict[str, str]], class_name: str = "visual-row") -> str:
         for index, item in enumerate(items, 1)
     )
 
-
+# Render either the main hero treatment or its ranked variation.
 def _hero(scene: dict, items: list[dict[str, str]], *, rank: bool = False) -> str:
     raw_hero = str(scene.get("hero") or "").strip()
     ordinal = bool(re.fullmatch(r"#?\d{1,3}", raw_hero))
@@ -69,7 +73,7 @@ def _hero(scene: dict, items: list[dict[str, str]], *, rank: bool = False) -> st
         f'<div class="visual-rows">{rows}</div></div>'
     )
 
-
+# Render a large metric with its label, progress track, and evidence rows.
 def _stat(scene: dict, items: list[dict[str, str]]) -> str:
     value = _clean(scene.get("hero") or scene.get("headline"))
     label = _clean(scene.get("hero_label"))
@@ -80,7 +84,7 @@ def _stat(scene: dict, items: list[dict[str, str]]) -> str:
         f'<div class="visual-rows">{_rows(items)}</div></div>'
     )
 
-
+# Render two planned items as a side-by-side comparison.
 def _compare(scene: dict, items: list[dict[str, str]]) -> str:
     columns = []
     for index, item in enumerate(items[:2]):
@@ -96,7 +100,7 @@ def _compare(scene: dict, items: list[dict[str, str]]) -> str:
         f'<div class="compare-caption">{_clean(scene.get("hero_label"))}</div></div>'
     )
 
-
+# Render three ordered items as a connected process.
 def _process(scene: dict, items: list[dict[str, str]]) -> str:
     steps = []
     for index, item in enumerate(items[:3], 1):
@@ -104,13 +108,14 @@ def _process(scene: dict, items: list[dict[str, str]]) -> str:
             f'<div class="process-step visual-item"><span class="process-index">{index:02d}</span>'
             f'<div><strong>{item["label"]}</strong><span>{item["value"]}</span></div></div>'
         )
+
     return (
         f'<div class="visual-stage process-stage" data-catalog-item="{_clean(scene.get("catalog_item", "none"))}">'
         '<div class="process-line"></div><div class="process-steps">'
         f'{"".join(steps)}</div><div class="process-caption">{_clean(scene.get("hero") or scene.get("hero_label"))}</div></div>'
     )
 
-
+# Render evidence rows inside a compact mock application window.
 def _interface(scene: dict, items: list[dict[str, str]]) -> str:
     rows = []
     for index, item in enumerate(items[:3], 1):
@@ -118,11 +123,13 @@ def _interface(scene: dict, items: list[dict[str, str]]) -> str:
             f'<div class="interface-row visual-item"><span class="interface-dot">{index:02d}</span>'
             f'<span>{item["label"]}</span><strong>{item["value"]}</strong></div>'
         )
+
     if not rows:
         rows.append(
             f'<div class="interface-row visual-item"><span class="interface-dot">01</span>'
             f'<span>State</span><strong>{_clean(scene.get("hero"))}</strong></div>'
         )
+
     return (
         f'<div class="visual-stage interface-stage" data-catalog-item="{_clean(scene.get("catalog_item", "none"))}">'
         '<div class="interface-window"><div class="interface-bar"><span></span><span></span><span></span>'
@@ -130,7 +137,7 @@ def _interface(scene: dict, items: list[dict[str, str]]) -> str:
         f'<div class="interface-rows">{"".join(rows)}</div></div></div>'
     )
 
-
+# Render the fixed brand image beside the scene's media annotation.
 def _media(scene: dict) -> str:
     return (
         f'<div class="visual-stage media-stage" data-catalog-item="{_clean(scene.get("catalog_item", "none"))}">'
@@ -139,7 +146,7 @@ def _media(scene: dict) -> str:
         f'<strong>{_clean(scene.get("hero") or scene.get("headline"))}</strong></div></div>'
     )
 
-
+# Dispatch a planned scene to the matching visual renderer.
 def _visual(scene: dict) -> str:
     kind = scene.get("kind", scene.get("layout", "hero"))
     items = _items(scene)
@@ -159,13 +166,13 @@ def _visual(scene: dict) -> str:
         return ""
     return _hero(scene, items)
 
-
+# Give every scene a numbered identifier for files and timeline hosts.
 def add_frame_ids(plan: dict) -> dict:
     for number, scene in enumerate(plan["scenes"], 1):
         scene["frame_id"] = f"{number:02d}-{scene['slug']}"
     return plan
 
-
+# Write project direction and copy the required brand and caption assets.
 def write_brief(project: Path, topic: str, destination: str, length: int, voice: str) -> None:
     (project / "BRIEF.md").write_text(
         f"""# BRIEF — {topic}
@@ -187,11 +194,11 @@ validated scene data; portrait templates own typography, spacing, graphics, and 
 """,
         encoding="utf-8",
     )
+
     shutil.copyfile(ROOT / "brand" / "frame.md", project / "frame.md")
-    shutil.copyfile(CATALOG / "registry.json", project / "catalog-registry.json")
-    shutil.copyfile(CATALOG / "allowlist.json", project / "catalog-allowlist.json")
     brand_assets = project / "assets" / "brand"
     brand_assets.mkdir(parents=True, exist_ok=True)
+    
     for source, name in (
         (ROOT / "brand/.media/images/logo_002.svg", "logo-white.svg"),
         (ROOT / "brand/.media/images/logo_001.webp", "logo-color.webp"),
@@ -208,19 +215,23 @@ validated scene data; portrait templates own typography, spacing, graphics, and 
             encoding="utf-8",
         )
 
-
+# Record install instructions when the plan selects allowlisted catalog items.
 def write_catalog_selection(project: Path, plan: dict) -> None:
-    """Record optional registry installs without making network calls during compilation."""
+    items = selected_items(plan)
+    if not items:
+        return
+
     commands = install_commands(plan)
+    shutil.copyfile(CATALOG / "allowlist.json", project / "catalog-allowlist.json")
     (project / "catalog-selection.json").write_text(
-        json.dumps({"items": selected_items(plan), "commands": commands}, indent=2) + "\n",
+        json.dumps({"items": items, "commands": commands}, indent=2) + "\n",
         encoding="utf-8",
     )
     script = ["#!/usr/bin/env sh", "set -eu", ""]
-    script.extend(commands or ["# No catalog item was selected for this plan."])
+    script.extend(commands)
     (project / "catalog-install.sh").write_text("\n".join(script) + "\n", encoding="utf-8")
 
-
+# Convert the structured plan into HyperFrames storyboard metadata.
 def write_storyboard(project: Path, plan: dict, length: int) -> None:
     lines = [
         "---", "format: 1080x1920", f"duration: {length}s",
@@ -228,6 +239,7 @@ def write_storyboard(project: Path, plan: dict, length: int) -> None:
         f"audience: {json.dumps(plan['audience'], ensure_ascii=False)}",
         f"music: {json.dumps(plan['music'], ensure_ascii=False)}", "mode: autonomous", "---", "",
     ]
+    
     for number, scene in enumerate(plan["scenes"], 1):
         lines += [
             f"## Frame {number} — {scene['title']}", "",
@@ -246,20 +258,23 @@ def write_storyboard(project: Path, plan: dict, length: int) -> None:
             f"- src: compositions/frames/{scene['frame_id']}.html", "",
             f"Visual: {scene['kind']} / {scene['variant']}. Hero: {scene['hero'] or scene['headline']}", "",
         ]
+
     lines += ["## Video direction", "", "- current: LEFT", "- primary_transition: push-slide LEFT", ""]
     (project / "STORYBOARD.md").write_text("\n".join(lines), encoding="utf-8")
 
-
+# Write the ordered narration lines consumed by the audio workflow.
 def write_script(project: Path, plan: dict, voice: str) -> None:
     lines = [f"# SCRIPT — {project.name}", "", f"**Voice:** {voice} (Kokoro, local)", "", "---", ""]
+
     for number, scene in enumerate(plan["scenes"], 1):
         lines += [f"## Line {number} — {scene['title']} (Frame {number})", "", f"    {scene['voiceover']}", ""]
     (project / "SCRIPT.md").write_text("\n".join(lines), encoding="utf-8")
 
-
+# Read per-frame durations back from the generated storyboard.
 def storyboard_durations(project: Path) -> dict[str, float]:
     text = (project / "STORYBOARD.md").read_text(encoding="utf-8")
     durations: dict[str, float] = {}
+
     for block in re.split(r"(?m)^(?=## Frame )", text):
         src = re.search(r"compositions/frames/([\w.-]+)\.html", block)
         duration = re.search(r"(?m)^- duration:\s*([\d.]+)s", block)
@@ -267,12 +282,13 @@ def storyboard_durations(project: Path) -> dict[str, float]:
             durations[src.group(1)] = float(duration.group(1))
     return durations
 
-
+# Compile each planned scene into a standalone HyperFrames HTML composition.
 def render_frames(project: Path, plan: dict) -> None:
     template = (TEMPLATES / "frame.html").read_text(encoding="utf-8")
     durations = storyboard_durations(project)
     target = project / "compositions" / "frames"
     target.mkdir(parents=True, exist_ok=True)
+
     for scene in plan["scenes"]:
         frame_id = scene["frame_id"]
         duration = durations.get(frame_id, scene["duration_s"])
@@ -287,28 +303,22 @@ def render_frames(project: Path, plan: dict) -> None:
         }
         (target / f"{frame_id}.html").write_text(_replace(template, values), encoding="utf-8")
 
-
+# Return useful timestamps for previewing the middle of each storyboard scene.
 def snapshot_times(project: Path) -> str:
     total = 0.0
     times = []
+
     for duration in storyboard_durations(project).values():
         times.append(f"{total + duration / 2:.2f}")
         total += duration
     return ",".join(times) or "0"
 
-
+# Add scene-seam motion that moves only each frame's visual group.
 def inject_visual_transitions(project: Path, plan: dict) -> None:
-    """Move only a frame's visual group at seams; keep the scene shell still.
-
-    The shared faceless-explainer transition injector targets the whole scene
-    wrapper. That makes the background, typography, and visual travel together.
-    Our portrait template exposes the `.visual` group instead, so the master
-    timeline can animate that group through inherited CSS variables without
-    touching the scene shell.
-    """
     index_path = project / "index.html"
     source = index_path.read_text(encoding="utf-8")
     anchor = 'window.__timelines["main"] = gsap.timeline({ paused: true });'
+
     if anchor not in source:
         raise RuntimeError("master timeline anchor not found in index.html")
 
@@ -353,19 +363,21 @@ def inject_visual_transitions(project: Path, plan: dict) -> None:
     source = source.replace(anchor, "\n".join(block), 1)
     index_path.write_text(source, encoding="utf-8")
 
-
+# Fade the shared caption overlay before the final CTA begins.
 def hide_cta_captions(project: Path, plan: dict) -> None:
-    """Fade the global caption track out for a caption-free CTA hold."""
     cta_index = next((i for i, scene in enumerate(plan["scenes"]) if scene["kind"] == "cta"), None)
     if cta_index is None:
         return
+
     durations = storyboard_durations(project)
     start = sum(durations.get(scene["frame_id"], scene["duration_s"]) for scene in plan["scenes"][:cta_index])
     index_path = project / "index.html"
     source = index_path.read_text(encoding="utf-8")
     marker = 'var tl = window.__timelines["main"];'
+
     if marker not in source or 'id="el-captions"' not in source or 'tl.to("#el-captions"' in source:
         return
+        
     cue = max(0, start - 0.15)
     fade = f'        tl.to("#el-captions", {{ opacity: 0, duration: 0.15, ease: "power1.out" }}, {cue:g});\n'
     index_path.write_text(source.replace(marker, marker + "\n" + fade, 1), encoding="utf-8")

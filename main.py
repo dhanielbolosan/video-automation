@@ -1,4 +1,4 @@
-"""Thin command-line runner for the video pipeline."""
+"""command-line runner for the video pipeline."""
 
 from __future__ import annotations
 
@@ -9,8 +9,7 @@ import sys
 from pathlib import Path
 
 from video_pipeline.pipeline import build_video
-from video_pipeline.project import load_dotenv
-
+from video_pipeline.runtime import load_dotenv
 
 def main() -> int:
     load_dotenv()
@@ -55,7 +54,6 @@ def main() -> int:
 
     print(json.dumps(result, indent=2))
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

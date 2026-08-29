@@ -12,7 +12,7 @@ from string import Template
 import anthropic
 
 from .catalog import catalog_choices, catalog_item
-from .project import ROOT
+from .runtime import PACKAGE_DIR
 
 SCENE_KINDS = ("hero", "stat", "rank", "compare", "process", "interface", "media", "cta")
 VARIANTS = (
@@ -20,6 +20,7 @@ VARIANTS = (
 )
 MOTION_PURPOSES = ("orient", "prove", "compare", "sequence", "demonstrate", "reveal", "brand_follow")
 TRANSITIONS = ("cut", "push-slide LEFT", "zoom-through")
+TEXT_FIELDS = ("title", "voiceover", "eyebrow", "headline", "subhead", "hero", "hero_label")
 
 LEGACY_KIND_MAP = {
     "tool-stack": "hero",
@@ -52,7 +53,7 @@ DEFAULT_MOTION = {
     "cta": "brand_follow",
 }
 
-
+# Build the strict JSON schema used to constrain the AI storyboard response.
 def schema(frame_count: int) -> dict:
     item = {
         "type": "object",
@@ -114,21 +115,23 @@ def schema(frame_count: int) -> dict:
         },
     }
 
-
 def _kind_for(scene: dict) -> str:
     raw_kind = str(scene.get("kind") or "").strip()
     if raw_kind in SCENE_KINDS:
         return raw_kind
-    layout = LAYOUT_MAP.get(str(scene.get("layout") or "").strip(), str(scene.get("layout") or "").strip())
+
+    raw_layout = str(scene.get("layout") or "").strip()
+    layout = LAYOUT_MAP.get(raw_layout, raw_layout)
     if layout in SCENE_KINDS:
         return layout
+
     return LEGACY_KIND_MAP.get(str(scene.get("visual_kind") or "").strip(), "hero")
 
-
 def _normalize_scene(scene: dict) -> None:
-    for field in ("title", "voiceover", "eyebrow", "headline", "subhead", "hero", "hero_label"):
+    for field in TEXT_FIELDS:
         if isinstance(scene.get(field), str):
-            scene[field] = scene[field].replace("—", " - ").replace("–", " - ")
+            scene[field] = " ".join(scene[field].replace("—", " - ").replace("–", " - ").split())
+
     kind = _kind_for(scene)
     scene["kind"] = kind
     scene["layout"] = kind
@@ -141,20 +144,21 @@ def _normalize_scene(scene: dict) -> None:
     scene["items"] = scene.get("items") if isinstance(scene.get("items"), list) else []
     scene["fact_ids"] = [str(value) for value in scene.get("fact_ids", [])] if isinstance(scene.get("fact_ids"), list) else []
 
-
 def load_plan(path: Path, frame_count: int) -> dict:
     plan = json.loads(path.read_text(encoding="utf-8"))
     validate(plan, frame_count)
     return plan
 
-
+# Reject unusable plans and normalize the final CTA and transition choices.
 def validate(plan: dict, frame_count: int, known_fact_ids: set[str] | None = None) -> None:
     if not isinstance(plan, dict):
         raise ValueError("plan must be an object")
     scenes = plan.get("scenes")
+
     if not isinstance(scenes, list) or len(scenes) != frame_count:
         raise ValueError(f"plan must contain exactly {frame_count} scenes")
     slugs: set[str] = set()
+
     for index, scene in enumerate(scenes, 1):
         if not isinstance(scene, dict):
             raise ValueError(f"scene {index} must be an object")
@@ -168,8 +172,6 @@ def validate(plan: dict, frame_count: int, known_fact_ids: set[str] | None = Non
             raise ValueError(f"scene {index} has unusable voiceover text")
         if not isinstance(scene.get("duration_s"), (int, float)) or scene["duration_s"] < 2:
             raise ValueError(f"scene {index} has an invalid duration")
-        if any("—" in str(scene.get(field, "")) for field in ("title", "voiceover", "eyebrow", "headline", "subhead", "hero", "hero_label")):
-            raise ValueError(f"scene {index} uses an em dash; use plain punctuation")
         if scene["kind"] != "cta" and len(str(scene.get("headline", "")).split()) > 6:
             raise ValueError(f"scene {index} headline must be six words or fewer")
         if len(str(scene.get("subhead", "")).split()) > 12:
@@ -187,13 +189,16 @@ def validate(plan: dict, frame_count: int, known_fact_ids: set[str] | None = Non
         for item in scene["items"]:
             if not isinstance(item, dict) or not str(item.get("label", "")).strip() or not str(item.get("value", "")).strip():
                 raise ValueError(f"scene {index} has an incomplete evidence item")
+
     scenes[0]["transition_in"] = "cut"
     zooms = 0
+
     for scene in scenes:
         if scene["transition_in"] == "zoom-through":
             zooms += 1
             if zooms > 1:
                 scene["transition_in"] = "push-slide LEFT"
+
     scenes[-1].update(
         layout="cta",
         kind="cta",
@@ -208,11 +213,12 @@ def validate(plan: dict, frame_count: int, known_fact_ids: set[str] | None = Non
         items=[],
         fact_ids=[],
     )
+
     referenced_facts = {fact_id for scene in scenes[:-1] for fact_id in scene["fact_ids"]}
     if known_fact_ids and not referenced_facts:
         raise ValueError("the plan does not cite any researched facts")
 
-
+# Ask Claude for a schema-constrained plan, then validate the returned scenes.
 def make_plan(
     topic: str,
     notes: str,
@@ -222,22 +228,25 @@ def make_plan(
     subscription: bool,
     known_fact_ids: set[str] | None = None,
 ) -> dict:
-    prompt = Template((ROOT / "video_pipeline" / "prompts" / "plan.md").read_text(encoding="utf-8")).substitute(
+    prompt = Template((PACKAGE_DIR / "prompts" / "plan.md").read_text(encoding="utf-8")).substitute(
         topic=topic,
         notes=notes,
         frame_count=frame_count,
         length=length,
         seconds=round(length / frame_count, 1),
     )
+
     plan_schema = schema(frame_count)
     if subscription:
         if not shutil.which("claude"):
             raise RuntimeError("claude CLI is not installed")
+
         command = [
             "claude", "-p", prompt, "--model", model, "--output-format", "json",
             "--json-schema", json.dumps(plan_schema, separators=(",", ":")),
             "--no-session-persistence", "--permission-mode", "dontAsk", "--tools", "",
         ]
+        
         done = subprocess.run(command, capture_output=True, text=True, timeout=1800)
         if done.returncode:
             raise RuntimeError((done.stdout + "\n" + done.stderr)[-4000:])
@@ -265,5 +274,6 @@ def make_plan(
         )
         raw = "".join(block.text for block in response.content if block.type == "text")
         plan = json.loads(raw)
+
     validate(plan, frame_count, known_fact_ids)
     return plan

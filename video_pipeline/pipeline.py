@@ -20,10 +20,10 @@ from .composition import (
     write_storyboard,
 )
 from .planning import load_plan, make_plan
-from .project import check_tools, hyperframes, init_project, next_project, node
-from .research import as_notes, get as get_research, load as load_research, write_artifacts
+from .runtime import check_tools, hyperframes, init_project, next_project, node
+from .research import as_notes, get_research, load_research, write_artifacts
 
-
+# Orchestrate research, planning, composition, audio, validation, and rendering.
 def build_video(
     *,
     topic: str,
@@ -43,6 +43,7 @@ def build_video(
 ) -> dict:
     if not 3 <= frame_count <= 10:
         raise ValueError("frames must be between 3 and 10")
+
     check_tools()
     project = next_project(topic)
     init_project(project, destination)
@@ -52,6 +53,7 @@ def build_video(
     research_cache = None
     research_reused = False
     model_calls = 0
+
     if plan_path:
         if refresh_research:
             raise ValueError("--refresh-research cannot be used with --plan")
@@ -76,11 +78,14 @@ def build_video(
             )
             notes = as_notes(research)
             model_calls += 0 if research_reused else 1
+
         known_fact_ids = {fact["id"] for fact in research["facts"]} if research else None
         plan = make_plan(topic, notes, frame_count, length, model, subscription, known_fact_ids)
         model_calls += 1
+
     if research:
         write_artifacts(project, research)
+
     add_frame_ids(plan)
     (project / "plan.json").write_text(json.dumps(plan, indent=2, ensure_ascii=False), encoding="utf-8")
     write_catalog_selection(project, plan)
@@ -90,6 +95,7 @@ def build_video(
     if audio:
         build_audio(project, voice)
     render_frames(project, plan)
+
     if audio:
         build_captions(project)
     node("assemble-index", "--storyboard", "./STORYBOARD.md", "--hyperframes", ".", cwd=project)
@@ -105,12 +111,14 @@ def build_video(
         "contact_sheet": str(project / "snapshots" / "contact-sheet.jpg"),
         "model_calls": model_calls,
     }
+
     if research_cache:
         result.update(
             research=str(project / "research.json"),
             research_cache=str(research_cache),
             research_reused=research_reused,
         )
+
     if render:
         output = project / "renders" / "video.mp4"
         hyperframes(
@@ -126,4 +134,5 @@ def build_video(
                 capture_output=True, text=True, check=True,
             )
             result["duration_s"] = round(float(done.stdout), 2)
+            
     return result

@@ -1,6 +1,0 @@
-{
-  "hyperframes": "0.8.15",
-  "install": "npx hyperframes@0.8.15 add <name> --dir <generated-project> --force",
-  "allowlist": "allowlist.json",
-  "notes": "Only names in allowlist.json may be selected. The generated project downloads the selected catalog item; the source repo does not need to vendor every catalog file."
-}
