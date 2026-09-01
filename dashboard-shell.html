@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Video Studio Dashboard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #0e394e;
+      --navy-deep: #092b3b;
+      --teal: #196d76;
+      --teal-light: #39a1ac;
+      --sand: #d19847;
+      --paper: #f4f1eb;
+      --surface: #fcfaf8;
+      --ink: #1d2930;
+      --muted: #68747a;
+      --line: #d9dedc;
+      --white: #fcfaf8;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 264px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 28px 20px 20px;
+      color: var(--white);
+      background: var(--navy);
+      border-right: 1px solid rgba(252, 250, 248, 0.12);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 10px;
+    }
+
+    .brand img {
+      width: 148px;
+      max-height: 42px;
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .workspace-label {
+      margin: 30px 10px 10px;
+      color: rgba(252, 250, 248, 0.55);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .workspace {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px;
+      border: 1px solid rgba(252, 250, 248, 0.14);
+      border-radius: 12px;
+      background: rgba(252, 250, 248, 0.06);
+    }
+
+    .workspace-mark {
+      display: grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      flex: 0 0 auto;
+      color: var(--navy-deep);
+      font-size: 13px;
+      font-weight: 800;
+      background: var(--sand);
+      border-radius: 9px;
+    }
+
+    .workspace-name {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .workspace-plan {
+      margin: 2px 0 0;
+      color: rgba(252, 250, 248, 0.55);
+      font-size: 11px;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 5px;
+      margin: 28px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nav-item {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 12px;
+      color: rgba(252, 250, 248, 0.68);
+      text-align: left;
+      background: transparent;
+      border: 0;
+      border-radius: 10px;
+    }
+
+    .nav-item[aria-current="page"] {
+      color: var(--white);
+      background: rgba(57, 161, 172, 0.2);
+      box-shadow: inset 3px 0 var(--teal-light);
+    }
+
+    .nav-icon {
+      display: grid;
+      width: 24px;
+      height: 24px;
+      place-items: center;
+      flex: 0 0 auto;
+      font-size: 11px;
+      font-weight: 800;
+      border: 1px solid currentColor;
+      border-radius: 7px;
+    }
+
+    .nav-text {
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid rgba(252, 250, 248, 0.12);
+    }
+
+    .usage-row {
+      display: flex;
+      justify-content: space-between;
+      color: rgba(252, 250, 248, 0.7);
+      font-size: 12px;
+    }
+
+    .usage-track {
+      height: 5px;
+      margin-top: 9px;
+      overflow: hidden;
+      background: rgba(252, 250, 248, 0.12);
+      border-radius: 99px;
+    }
+
+    .usage-fill {
+      width: 38%;
+      height: 100%;
+      background: var(--teal-light);
+      border-radius: inherit;
+    }
+
+    .main {
+      min-width: 0;
+      padding: 44px clamp(24px, 5vw, 72px) 64px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .eyebrow {
+      margin: 0 0 9px;
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
+    }
+
+    .intro {
+      max-width: 580px;
+      margin: 13px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .primary-button {
+      flex: 0 0 auto;
+      padding: 12px 17px;
+      color: var(--white);
+      font-weight: 750;
+      background: var(--teal);
+      border: 1px solid var(--teal);
+      border-radius: 11px;
+      box-shadow: 0 8px 24px rgba(25, 109, 118, 0.18);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .section-count {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .project-list {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 18px 50px rgba(29, 41, 48, 0.06);
+    }
+
+    .project-row {
+      display: grid;
+      grid-template-columns: 76px minmax(190px, 1fr) 120px 110px;
+      gap: 18px;
+      align-items: center;
+      min-height: 104px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .project-row:last-child {
+      border-bottom: 0;
+    }
+
+    .thumbnail {
+      position: relative;
+      width: 64px;
+      aspect-ratio: 9 / 16;
+      overflow: hidden;
+      background: var(--navy);
+      border-radius: 8px;
+      box-shadow: inset 0 0 0 1px rgba(252, 250, 248, 0.12);
+    }
+
+    .thumbnail::before,
+    .thumbnail::after {
+      position: absolute;
+      left: 9px;
+      content: "";
+      background: var(--white);
+      border-radius: 99px;
+    }
+
+    .thumbnail::before {
+      top: 21px;
+      width: 38px;
+      height: 5px;
+    }
+
+    .thumbnail::after {
+      top: 31px;
+      width: 26px;
+      height: 3px;
+      opacity: 0.55;
+    }
+
+    .thumbnail-accent {
+      position: absolute;
+      right: -8px;
+      bottom: 10px;
+      width: 38px;
+      height: 38px;
+      background: var(--teal-light);
+      border-radius: 50%;
+    }
+
+    .project-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 750;
+    }
+
+    .project-meta {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 9px;
+      color: #235c4a;
+      font-size: 11px;
+      font-weight: 750;
+      background: #e4f1eb;
+      border-radius: 99px;
+    }
+
+    .status::before {
+      width: 6px;
+      height: 6px;
+      content: "";
+      background: #367d65;
+      border-radius: 50%;
+    }
+
+    .status.draft {
+      color: #715929;
+      background: #f5ead7;
+    }
+
+    .status.draft::before {
+      background: var(--sand);
+    }
+
+    .project-date {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+      gap: 22px;
+      margin-top: 30px;
+    }
+
+    .panel {
+      padding: 22px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .panel-copy {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .queue-item {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .queue-mark {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      background: #e5f0f0;
+      border-radius: 10px;
+    }
+
+    .queue-title {
+      overflow: hidden;
+      margin: 0;
+      font-size: 13px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .queue-meta {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .queue-progress {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .empty-state {
+      display: grid;
+      min-height: 124px;
+      place-items: center;
+      margin-top: 18px;
+      padding: 22px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      background: #f3f0ea;
+      border: 1px dashed #cbd2d0;
+      border-radius: 12px;
+    }
+
+    @media (max-width: 880px) {
+      .app-shell {
+        grid-template-columns: 88px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        padding-inline: 12px;
+      }
+
+      .brand img,
+      .workspace-label,
+      .workspace-copy,
+      .nav-text,
+      .sidebar-footer {
+        display: none;
+      }
+
+      .brand,
+      .workspace,
+      .nav-item {
+        justify-content: center;
+      }
+
+      .brand::before {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        content: "P";
+        color: var(--navy-deep);
+        font-weight: 900;
+        background: var(--sand);
+        border-radius: 10px;
+      }
+
+      .project-row {
+        grid-template-columns: 64px minmax(0, 1fr) 110px;
+      }
+
+      .project-date {
+        display: none;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .main {
+        padding: 30px 18px 48px;
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .primary-button {
+        width: 100%;
+      }
+
+      .project-row {
+        grid-template-columns: 52px minmax(0, 1fr);
+      }
+
+      .thumbnail {
+        width: 46px;
+      }
+
+      .status {
+        grid-column: 2;
+      }
+
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Static visual component: controls intentionally have no behavior. -->
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Workspace navigation">
+      <div class="brand">
+        <img src="brand/.media/images/logo_002.svg" alt="Pūpūkahi Tech">
+      </div>
+
+      <p class="workspace-label">Workspace</p>
+      <div class="workspace">
+        <span class="workspace-mark" aria-hidden="true">PT</span>
+        <div class="workspace-copy">
+          <p class="workspace-name">Video Studio</p>
+          <p class="workspace-plan">Local workspace</p>
+        </div>
+      </div>
+
+      <nav aria-label="Primary">
+        <ul class="nav-list">
+          <li>
+            <button class="nav-item" type="button" aria-current="page">
+              <span class="nav-icon" aria-hidden="true">01</span>
+              <span class="nav-text">Projects</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" type="button">
+              <span class="nav-icon" aria-hidden="true">02</span>
+              <span class="nav-text">Templates</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" type="button">
+              <span class="nav-icon" aria-hidden="true">03</span>
+              <span class="nav-text">Assets</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" type="button">
+              <span class="nav-icon" aria-hidden="true">04</span>
+              <span class="nav-text">Brand kit</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" type="button">
+              <span class="nav-icon" aria-hidden="true">05</span>
+              <span class="nav-text">Settings</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="usage-row">
+          <span>Local storage</span>
+          <span>3.8 GB</span>
+        </div>
+        <div class="usage-track" aria-label="38 percent of local storage used">
+          <div class="usage-fill"></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Video workspace</p>
+          <h1>Your projects</h1>
+          <p class="intro">Turn a topic or source into a researched, editable social video.</p>
+        </div>
+        <button class="primary-button" type="button">New video</button>
+      </header>
+
+      <section aria-labelledby="recent-projects">
+        <div class="section-heading">
+          <h2 id="recent-projects">Recent projects</h2>
+          <span class="section-count">3 projects</span>
+        </div>
+
+        <div class="project-list">
+          <article class="project-row">
+            <div class="thumbnail" aria-hidden="true"><span class="thumbnail-accent"></span></div>
+            <div>
+              <p class="project-title">Affordable AI subscriptions</p>
+              <p class="project-meta">6 scenes · 45 seconds · TikTok</p>
+            </div>
+            <span class="status">Ready</span>
+            <time class="project-date" datetime="2026-08-31">Today</time>
+          </article>
+
+          <article class="project-row">
+            <div class="thumbnail" aria-hidden="true"><span class="thumbnail-accent"></span></div>
+            <div>
+              <p class="project-title">Emergency grants for local business</p>
+              <p class="project-meta">5 scenes · 38 seconds · Reels</p>
+            </div>
+            <span class="status draft">Draft</span>
+            <time class="project-date" datetime="2026-08-29">2 days ago</time>
+          </article>
+
+          <article class="project-row">
+            <div class="thumbnail" aria-hidden="true"><span class="thumbnail-accent"></span></div>
+            <div>
+              <p class="project-title">Five useful automation habits</p>
+              <p class="project-meta">7 scenes · 52 seconds · Shorts</p>
+            </div>
+            <span class="status">Ready</span>
+            <time class="project-date" datetime="2026-08-25">6 days ago</time>
+          </article>
+        </div>
+      </section>
+
+      <div class="bottom-grid">
+        <section class="panel" aria-labelledby="render-queue">
+          <h2 id="render-queue">Render queue</h2>
+          <p class="panel-copy">One local worker is available.</p>
+          <div class="queue-item">
+            <span class="queue-mark" aria-hidden="true">MP4</span>
+            <div>
+              <p class="queue-title">Affordable AI subscriptions</p>
+              <p class="queue-meta">Rendering scene 4 of 6</p>
+            </div>
+            <span class="queue-progress">68%</span>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="saved-templates">
+          <h2 id="saved-templates">Saved templates</h2>
+          <p class="panel-copy">Reusable frame designs will appear here.</p>
+          <div class="empty-state">No custom templates yet</div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
